@@ -27,11 +27,11 @@ public class BoardController {
 	private final CategoryService categoryService;
 
 	@GetMapping()
-	public String getBoardListView(PageDTO<BoardDTO> boardPage, Model model) throws Exception {
+	public void getBoardList(PageDTO<BoardDTO> boardPage, Model model) throws Exception {
 		model.addAttribute("pageInfo", boardService.listAll(boardPage));
 	    model.addAttribute("boardList", boardPage.getContentList());
-//	    System.out.println(model);
-		return "board/getBoardList";
+	    System.out.println(boardService.listAll(boardPage));
+//		return "board/getBoardList";
 	}
 
 	@GetMapping("/{documentId}")

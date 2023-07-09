@@ -31,34 +31,34 @@
 
 
 	<select id="getCategory" resultType="CategoryDTO">
-		select * from BBS_CATEGORY where category_id=#{categoryId}
+		select * from bbs_category where category_id=#{categoryId}
 	</select>
 
 	<select id="getMember" resultType="MemberDTO">
-		select * from BBS_MEMBER where member_id=#{memberId}
+		select * from bbs_member where member_id=#{memberId}
 	</select>
 
 	<select id="getGroup" resultType="GroupDTO">
-		select * from BBS_MEMBER_GROUP where group_id=#{groupId}
+		select * from bbs_member_group where group_id=#{groupId}
 	</select>
 
 	<select id="getComments" resultType="CommentDTO">
-	select * from BBS_COMMENTS where document_id=#{documentId}
+	select * from bbs_comments where document_id=#{documentId}
 	</select>
 
 	<!-- insert id="create">
-		insert into BBS_BOARD (category_id, is_notice, title, content, member_id)
+		insert into bbs_board (category_id, is_notice, title, content, member_id)
 		values (#{categoryId}, #{isNotice}, #{title}, #{content}, #{memberId})
 	</insert-->
 	
 	<!-- insert id="create">
-		insert into BBS_BOARD (category_id, is_notice, title, content, member_id)
+		insert into bbs_board (category_id, is_notice, title, content, member_id)
 		values 
 		(#{categoryId}, #{isNotice, typeHandler=com.heavyplus.config.YNTypeHandler}, #{title}, #{content}, #{memberId})
 	</insert-->
 	
 	<insert id="create">
-		insert into BBS_BOARD (category_id, is_notice, title, content, member_id)
+		insert into bbs_board (category_id, is_notice, title, content, member_id)
 		values (#{categoryId}, #{isNotice, typeHandler=com.heavyplus.config.YNTypeHandler}, #{title}, #{content}, #{memberId})
 		<selectKey keyProperty="documentId" resultType="Long" order="AFTER">
 			select max(document_id) as document_id from BBS_BOARD
@@ -66,15 +66,15 @@
 	</insert>
 
 	<select id="read" resultMap="getBoard"> 
-		select b.* from BBS_BOARD b
-		join BBS_CATEGORY c on b.category_id = c.category_id 
-		join BBS_MEMBER m on b.member_id = m.member_id
-		left outer join BBS_COMMENTS cmt on b.document_id = cmt.document_id
+		select b.* from bbs_board b
+		join bbs_category c on b.category_id = c.category_id 
+		join bbs_member m on b.member_id = m.member_id
+		left outer join bbs_comments cmt on b.document_id = cmt.document_id
 		where b.document_id = #{documentId}
 	</select>
 
 	<!-- update id="update">
-		update BBS_BOARD set 
+		update bbs_board set 
 			category_id=#{categoryId}, 
 			is_notice=#{isNotice}, 
 			title=#{title}, 
@@ -84,7 +84,7 @@
 	</update-->
 	
 	<update id="update">
-		update BBS_BOARD set
+		update bbs_board set
 			category_id=#{categoryId}, 
 			is_notice=#{isNotice, typeHandler=com.heavyplus.config.YNTypeHandler}, 
 			title=#{title}, 
@@ -94,15 +94,15 @@
 		</update>
 
 	<delete id="delete"> 
-		delete from BBS_BOARD where document_id = #{documentId} 
+		delete from bbs_board where document_id = #{documentId} 
 	</delete>
 
 	<!-- select id="listAll" resultMap="getBoard">
 	<![CDATA[ 
-		select b.* from BBS_BOARD b
-		join BBS_CATEGORY c on b.category_id = c.category_id 
-		join BBS_MEMBER m on b.member_id = m.member_id
-		left outer join BBS_COMMENTS cmt on b.document_id = cmt.document_id
+		select b.* from bbs_board b
+		join bbs_category c on b.category_id = c.category_id 
+		join bbs_member m on b.member_id = m.member_id
+		left outer join bbs_comments cmt on b.document_id = cmt.document_id
 		where b.document_id > 0 order by b.document_id desc
 	]]>
 	</select-->
@@ -111,7 +111,7 @@
 	<select id="listAll" resultMap="getBoardList">
 		<![CDATA[
 		
-		select * from BBS_BOARD 
+		select * from bbs_board 
 				where document_id > 0
 				order by document_id desc
 				limit #{first} , #{last}
@@ -120,7 +120,7 @@
 	</select>
 	
 	<select id="getCount" resultType="long">
-		select count(*) from BBS_BOARD where document_id > 0
+		select count(*) from bbs_board where document_id > 0
 	</select>
 
 </mapper>
