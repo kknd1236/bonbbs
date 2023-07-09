@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heavyplus.dao.BoardMapper">
+
+	<!-- select id="searchBoard" parameterType="map" resultType="com.heavyplus.bonbbs.BBSDto">
+		SELECT id, title, content, writer, hits, create_date, update_date
+		FROM TB_BON_BOARD 
+		WHERE title LIKE '%' || #{searchKeyword} || '%'
+		LIMIT #{offset}, #{limit}
+	</select-->
+	
+	<select id="searchBoard" parameterType="map"  resultType="com.heavyplus.dto.BBSDto">
+		SELECT id, title, content, writer, hits, create_date, update_date
+		FROM TB_BON_BOARD
+		<if test="searchKeyword != null">
+		WHERE title like CONCAT('%',#{searchKeyword},'%')
+		</if>
+		LIMIT #{offset}, #{limit}
+	</select>	
+	
+	<select id="seeBoard" parameterType="map" resultType="com.heavyplus.dto.BBSDto">
+		SELECT id, title, content, writer, hits, create_date, update_date
+		FROM TB_BON_BOARD 
+		WHERE id = #{id}
+	</select>
+	
+	<select id="readBoard" parameterType="map" resultType="com.heavyplus.dto.BBSDto">
+		SELECT * FROM TB_BON_BOARD WHERE id = #{id}
+	</select>
+	
+	<insert id="addBoard" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO TB_BON_BOARD SET
+			title	= #{title},
+			content	= #{content},
+			writer	= #{writer}
+	</insert>
+	
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="id" order="BEFORE" resultType="int">
+			SELECT TB_BON_BOARD_id.nextval FROM TB_BON_BOARD
+		</selectKey>
+		INSERT INTO TB_BON_BOARD SET
+			title	= #{title},
+			content	= #{content},
+			writer	= #{writer}
+	</insert>
+	
+	<update id="editBoard" parameterType="map">
+		UPDATE TB_BON_BOARD SET 
+			title	= #{title},
+			content	= #{content},
+			writer  = #{writer} 
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="map">
+		DELETE FROM TB_BON_BOARD WHERE id = #{id}
+	</delete>
+	
+	<select id="pageCount" parameterType="map" resultType="int">
+		SELECT
+			COUNT(*) as cnt
+		FROM TB_BON_BOARD
+		<if test="searchKeyword != null">
+		WHERE title like CONCAT('%',#{searchKeyword},'%')
+		</if>
+	</select>	
+	
+</mapper>
+
+
+<!-- 
+* 쿼리문에 특수문자가 있을 때 하나의 스트링으로 처리하는 기호
+<![CDATA[
+	////////////
+]]>
+ -->

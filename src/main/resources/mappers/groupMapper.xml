@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heavyplus.dao.GroupDAO">
+
+	<insert id="create">
+		insert into BBS_MEMBER_GROUP (group_name) values (#{groupName})
+	</insert>
+	
+	
+	<select id="read" resultType="GroupDTO">
+		select * from BBS_MEMBER_GROUP where group_id = #{groupId}
+	</select>
+	
+	<update id="update">
+		update BBS_MEMBER_GROUP set group_name=#{groupName}, update_date=SYSDATE 
+		where group_id = #{groupId}
+	</update>
+	
+	<delete id="delete"> 
+		delete from BBS_MEMBER_GROUP where group_id = #{groupId} 
+	</delete>
+	
+	<select id="listAll" resultType="GroupDTO">
+		<![CDATA[ select * from BBS_MEMBER_GROUP where group_id > 0 order by group_id desc ]]>
+	</select>
+
+</mapper>
+
+<!-- 
+* 쿼리문에 특수문자가 있을 때 하나의 스트링으로 처리하는 기호
+<![CDATA[
+	////////////
+]]>
+ -->

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heavyplus.dao.BoardDAO">
+
+	<!-- resultMap id="getBoard" type="BoardDTO">
+		<id property="documentId" column="document_id" />
+		<association property="category" column="category_id" javaType="CategoryDTO" select="getCategory" />
+		<association property="member" column="member_id" javaType="MemberDTO" select="getMember" />
+		<association property="group" column="group_id" javaType="GroupDTO" select="getGroup" />
+		<collection property="commentList" column="document_id" javaType="java.lang.ArrayList" ofType="CommentDTO" select="getComments" />
+	</resultMap-->
+	
+	<resultMap id="getBoard" type="BoardDTO">
+		<id property="documentId" column="document_id" />
+		<result property="isNotice" column="is_notice" typeHandler="com.heavyplus.config.YNTypeHandler" />
+		<association property="category" column="category_id" javaType="CategoryDTO" select="getCategory" />
+		<association property="member" column="member_id" javaType="MemberDTO" select="getMember" />
+		<association property="group" column="group_id" javaType="GroupDTO" select="getGroup" />
+		<collection property="commentList" column="document_id" javaType="java.util.List" ofType="CommentDTO" select="getComments" />
+	</resultMap>
+
+	<select id="getCategory" resultType="CategoryDTO">
+		select * from BBS_CATEGORY where category_id=#{categoryId}
+	</select>
+
+	<select id="getMember" resultType="MemberDTO">
+		select * from BBS_MEMBER where member_id=#{memberId}
+	</select>
+
+	<select id="getGroup" resultType="GroupDTO">
+		select * from BBS_MEMBER_GROUP where group_id=#{groupId}
+	</select>
+
+	<select id="getComments" resultType="CommentDTO">
+	select * from BBS_COMMENTS where document_id=#{documentId}
+	</select>
+
+	<!-- insert id="create">
+		insert into BBS_BOARD (category_id, is_notice, title, content, member_id)
+		values (#{categoryId}, #{isNotice}, #{title}, #{content}, #{memberId})
+	</insert-->
+	
+	<!-- insert id="create">
+		insert into BBS_BOARD (category_id, is_notice, title, content, member_id)
+		values 
+		(#{categoryId}, #{isNotice, typeHandler=com.heavyplus.config.YNTypeHandler}, #{title}, #{content}, #{memberId})
+	</insert-->
+	
+	<insert id="create">
+		insert into BBS_BOARD (category_id, is_notice, title, content, member_id)
+		values (#{categoryId}, #{isNotice, typeHandler=com.heavyplus.config.YNTypeHandler}, #{title}, #{content}, #{memberId})
+		<selectKey keyProperty="documentId" resultType="Long" order="AFTER">
+			select max(document_id) as document_id from BBS_BOARD
+		</selectKey>
+	</insert>
+
+	<select id="read" resultMap="getBoard"> 
+		select b.* from BBS_BOARD b
+		join BBS_CATEGORY c on b.category_id = c.category_id 
+		join BBS_MEMBER m on b.member_id = m.member_id
+		left outer join BBS_COMMENTS cmt on b.document_id = cmt.document_id
+		where b.document_id = #{documentId}
+	</select>
+
+	<!-- update id="update">
+		update BBS_BOARD set 
+			category_id=#{categoryId}, 
+			is_notice=#{isNotice}, 
+			title=#{title}, 
+			content=#{content},  
+			update_date= NOW()
+		where document_id = #{documentId}
+	</update-->
+	
+	<update id="update">
+		update BBS_BOARD set
+			category_id=#{categoryId}, 
+			is_notice=#{isNotice, typeHandler=com.heavyplus.config.YNTypeHandler}, 
+			title=#{title}, 
+			content=#{content},  
+			update_date=SYSDATE
+		where document_id = #{documentId}
+		</update>
+
+	<delete id="delete"> 
+		delete from BBS_BOARD where document_id = #{documentId} 
+	</delete>
+
+	<!-- select id="listAll" resultMap="getBoard">
+	<![CDATA[ 
+		select b.* from BBS_BOARD b
+		join BBS_CATEGORY c on b.category_id = c.category_id 
+		join BBS_MEMBER m on b.member_id = m.member_id
+		left outer join BBS_COMMENTS cmt on b.document_id = cmt.document_id
+		where b.document_id > 0 order by b.document_id desc
+	]]>
+	</select-->
+	
+	<!-- 오라클 DB에서는 limit를 사용하여 페이징 처리를 하지못하여 rownum을 사용해서 페이징 처리함 // 하기 내용 수정해여함. -->
+	<select id="listAll" resultMap="getBoard">
+		<![CDATA[
+		
+		select * from BBS_BOARD 
+				where document_id > 0
+				order by document_id desc
+				limit #{first} , #{last}
+		
+		]]>
+	</select>
+	
+	<select id="getCount" resultType="long">
+		select count(*) from BBS_BOARD where document_id > 0
+	</select>
+
+</mapper>
