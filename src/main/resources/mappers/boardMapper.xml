@@ -20,6 +20,15 @@
 		<association property="group" column="group_id" javaType="GroupDTO" select="getGroup" />
 		<collection property="commentList" column="document_id" javaType="java.util.List" ofType="CommentDTO" select="getComments" />
 	</resultMap>
+	
+	<resultMap id="getBoardList" type="BoardDTO">
+		<id property="documentId" column="document_id" />
+		<result property="isNotice" column="is_notice" typeHandler="com.heavyplus.config.YNTypeHandler" />
+		<association property="category" column="category_id" select="getCategory" />
+		<association property="member" column="member_id" select="getMember" />
+		<association property="group" column="group_id" select="getGroup" />
+	</resultMap>
+
 
 	<select id="getCategory" resultType="CategoryDTO">
 		select * from BBS_CATEGORY where category_id=#{categoryId}
@@ -99,7 +108,7 @@
 	</select-->
 	
 	<!-- 오라클 DB에서는 limit를 사용하여 페이징 처리를 하지못하여 rownum을 사용해서 페이징 처리함 // 하기 내용 수정해여함. -->
-	<select id="listAll" resultMap="getBoard">
+	<select id="listAll" resultMap="getBoardList">
 		<![CDATA[
 		
 		select * from BBS_BOARD 
